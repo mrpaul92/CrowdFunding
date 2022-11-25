@@ -57,6 +57,7 @@ contract CrowdFunding is Ownable {
     struct UserDonation {
         uint campaignId;
         uint amount;
+        uint timestamp;
     }
 
     mapping(address => User) private _users;
@@ -273,7 +274,9 @@ contract CrowdFunding is Ownable {
                 }
 
                 // add into user's Donations
-                _userDonations[msg.sender].push(UserDonation(_id, msg.value));
+                _userDonations[msg.sender].push(
+                    UserDonation(_id, msg.value, block.timestamp)
+                );
             }
         }
     }
