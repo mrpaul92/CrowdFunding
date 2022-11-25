@@ -54,17 +54,22 @@ contract CrowdFunding is Ownable {
         bool status;
         uint timestamp;
     }
-    struct UserDonation {
+    struct UserContribution {
         uint campaignId;
         uint amount;
         uint timestamp;
+    }
+    struct Contribution {
+        address payable contributor;
+        uint amount;
     }
 
     mapping(address => User) private _users;
     Campaign[] private _campaigns;
     mapping(uint => File[]) private _campaignFiles;
-    mapping(address => UserDonation[]) private _userDonations;
+    mapping(address => UserContribution[]) private _userContributions;
     mapping(address => uint[]) private _fundRaiserCampaigns;
+    mapping(uint => Contribution[]) private _contributions;
 
     // constructor
     constructor() {
@@ -259,7 +264,7 @@ contract CrowdFunding is Ownable {
         return _campaigns;
     }
 
-    function donate(
+    function contribute(
         uint256 _id
     ) external payable hasValidAddress campaignDonationValidator(_id) {
         for (uint i = 0; i < _campaigns.length; i++) {
@@ -274,15 +279,31 @@ contract CrowdFunding is Ownable {
                 }
 
                 // add into user's Donations
-                _userDonations[msg.sender].push(
-                    UserDonation(_id, msg.value, block.timestamp)
+                _userContributions[msg.sender].push(
+                    UserContribution(_id, msg.value, block.timestamp)
+                );
+
+                // add campaign donation history
+                _contributions[_id].push(
+                    Contribution(payable(msg.sender), msg.value)
                 );
             }
         }
     }
 
-    function getUserDonations() external view returns (UserDonation[] memory) {
-        return _userDonations[msg.sender];
+    function getUserDonations()
+        external
+        view
+        hasValidAddress
+        returns (UserContribution[] memory)
+    {
+        return _userContributions[msg.sender];
+    }
+
+    function getCampaignContributions(
+        uint _id
+    ) external view hasValidAddress returns (Contribution[] memory) {
+        return _contributions[_id];
     }
 
     // Events ==============
