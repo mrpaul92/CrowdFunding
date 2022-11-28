@@ -12,6 +12,7 @@ contract CrowdFunding is Ownable {
 
     Counters.Counter private _userId;
     Counters.Counter private _campaignId;
+    Counters.Counter private _categoryId;
     string private constant ADMIN_EMAIL = "mrpaul92@gmail.com";
 
     enum UserRole {
@@ -28,6 +29,12 @@ contract CrowdFunding is Ownable {
         Rejected
     }
 
+    struct Category {
+        uint256 id;
+        string name;
+        bool status;
+        uint timestamp;
+    }
     struct User {
         uint256 id;
         string name;
@@ -72,6 +79,7 @@ contract CrowdFunding is Ownable {
         File[] _files;
     }
 
+    Category[] private _categories;
     mapping(address => User) private _users;
     Campaign[] private _campaigns;
     mapping(uint256 => File[]) private _campaignFiles;
@@ -92,11 +100,36 @@ contract CrowdFunding is Ownable {
             true,
             block.timestamp
         );
+        // create some categories by default
+        _categoryId.increment();
+        _categories.push(
+            Category(_categoryId.current(), "Medical", true, block.timestamp)
+        );
+        _categoryId.increment();
+        _categories.push(
+            Category(_categoryId.current(), "NGO", true, block.timestamp)
+        );
+        _categoryId.increment();
+        _categories.push(
+            Category(_categoryId.current(), "Business", true, block.timestamp)
+        );
+        _categoryId.increment();
+        _categories.push(
+            Category(_categoryId.current(), "Personal", true, block.timestamp)
+        );
+        _categoryId.increment();
+        _categories.push(
+            Category(_categoryId.current(), "Others", true, block.timestamp)
+        );
     }
 
     // Modifires ==============
     modifier hasValidAddress() {
         require(msg.sender != address(0), "Not a valid address!");
+        _;
+    }
+    modifier createCategoryValidator(string calldata _name) {
+        require(bytes(_name).length > 0, "Category name is required!");
         _;
     }
     modifier createUserValidator(
@@ -167,6 +200,23 @@ contract CrowdFunding is Ownable {
     }
 
     // Functions ==============
+
+    function createCategory(
+        string calldata _name
+    ) external onlyOwner createCategoryValidator(_name) {
+        _categoryId.increment();
+        _categories.push(
+            Category(_categoryId.current(), _name, true, block.timestamp)
+        );
+    }
+
+    function deleteCategory(uint256 _id) external onlyOwner {
+        for (uint i = 0; i < _categories.length; i++) {
+            if (_categories[i].id == _id) {
+                _categories[i].status = false;
+            }
+        }
+    }
 
     function createUser(
         string calldata _name,
