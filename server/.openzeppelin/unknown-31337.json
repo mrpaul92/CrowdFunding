@@ -1,0 +1,471 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    "txHash": "0x207a8b38b665b43cc88879d6f0dc42dc3ffa3739b661259d17d704a5f5f64e23"
+  },
+  "proxies": [
+    {
+      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      "txHash": "0x3af6a3ad5d00ee3be2728ee13868e795a4e0ccddbce94e867ac51eb391bf3c51",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "c46c24c6dfaa90d677c48247c7ce511852b27ad3344140578547738c68540ddd": {
+      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "txHash": "0xe8f502cfbfef40575aea983e4061f8806b615efda5a955e9438f9cab54fe8833",
+      "layout": {
+        "solcVersion": "0.8.17",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "_userId",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_struct(Counter)632_storage",
+            "contract": "CrowdFunding",
+            "src": "contracts/CrowdFunding.sol:14"
+          },
+          {
+            "label": "_campaignId",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_struct(Counter)632_storage",
+            "contract": "CrowdFunding",
+            "src": "contracts/CrowdFunding.sol:15"
+          },
+          {
+            "label": "_categoryId",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_struct(Counter)632_storage",
+            "contract": "CrowdFunding",
+            "src": "contracts/CrowdFunding.sol:16"
+          },
+          {
+            "label": "_categories",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_array(t_struct(Category)1061_storage)dyn_storage",
+            "contract": "CrowdFunding",
+            "src": "contracts/CrowdFunding.sol:83"
+          },
+          {
+            "label": "_users",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_mapping(t_address,t_struct(User)1077_storage)",
+            "contract": "CrowdFunding",
+            "src": "contracts/CrowdFunding.sol:84"
+          },
+          {
+            "label": "_campaigns",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_array(t_struct(Campaign)1107_storage)dyn_storage",
+            "contract": "CrowdFunding",
+            "src": "contracts/CrowdFunding.sol:85"
+          },
+          {
+            "label": "_campaignFiles",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_mapping(t_uint256,t_array(t_struct(File)1080_storage)dyn_storage)",
+            "contract": "CrowdFunding",
+            "src": "contracts/CrowdFunding.sol:86"
+          },
+          {
+            "label": "_userContributions",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_mapping(t_address,t_array(t_struct(UserContribution)1114_storage)dyn_storage)",
+            "contract": "CrowdFunding",
+            "src": "contracts/CrowdFunding.sol:87"
+          },
+          {
+            "label": "_fundRaiserCampaigns",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+            "contract": "CrowdFunding",
+            "src": "contracts/CrowdFunding.sol:88"
+          },
+          {
+            "label": "_contributions",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_mapping(t_uint256,t_array(t_struct(Contribution)1119_storage)dyn_storage)",
+            "contract": "CrowdFunding",
+            "src": "contracts/CrowdFunding.sol:89"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_address_payable": {
+            "label": "address payable",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_struct(Campaign)1107_storage)dyn_storage": {
+            "label": "struct CrowdFunding.Campaign[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(Category)1061_storage)dyn_storage": {
+            "label": "struct CrowdFunding.Category[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(Contribution)1119_storage)dyn_storage": {
+            "label": "struct CrowdFunding.Contribution[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(File)1080_storage)dyn_storage": {
+            "label": "struct CrowdFunding.File[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(UserContribution)1114_storage)dyn_storage": {
+            "label": "struct CrowdFunding.UserContribution[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_enum(CampaignApprovalStatus)1052": {
+            "label": "enum CrowdFunding.CampaignApprovalStatus",
+            "members": [
+              "Created",
+              "Approved",
+              "Rejected"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_enum(CampaignStatus)1048": {
+            "label": "enum CrowdFunding.CampaignStatus",
+            "members": [
+              "Fundraising",
+              "Completed"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_enum(UserRole)1045": {
+            "label": "enum CrowdFunding.UserRole",
+            "members": [
+              "Admin",
+              "Fundraiser"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_array(t_struct(UserContribution)1114_storage)dyn_storage)": {
+            "label": "mapping(address => struct CrowdFunding.UserContribution[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+            "label": "mapping(address => uint256[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_struct(User)1077_storage)": {
+            "label": "mapping(address => struct CrowdFunding.User)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_array(t_struct(Contribution)1119_storage)dyn_storage)": {
+            "label": "mapping(uint256 => struct CrowdFunding.Contribution[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_array(t_struct(File)1080_storage)dyn_storage)": {
+            "label": "mapping(uint256 => struct CrowdFunding.File[])",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Campaign)1107_storage": {
+            "label": "struct CrowdFunding.Campaign",
+            "members": [
+              {
+                "label": "id",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "description",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "imageHash",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "goalAmount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "currentBalance",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "deadline",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "6"
+              },
+              {
+                "label": "creator",
+                "type": "t_address_payable",
+                "offset": 0,
+                "slot": "7"
+              },
+              {
+                "label": "campaignStatus",
+                "type": "t_enum(CampaignStatus)1048",
+                "offset": 20,
+                "slot": "7"
+              },
+              {
+                "label": "campaignApprovalStatus",
+                "type": "t_enum(CampaignApprovalStatus)1052",
+                "offset": 21,
+                "slot": "7"
+              },
+              {
+                "label": "status",
+                "type": "t_bool",
+                "offset": 22,
+                "slot": "7"
+              },
+              {
+                "label": "timestamp",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "8"
+              }
+            ],
+            "numberOfBytes": "288"
+          },
+          "t_struct(Category)1061_storage": {
+            "label": "struct CrowdFunding.Category",
+            "members": [
+              {
+                "label": "id",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "status",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "timestamp",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_struct(Contribution)1119_storage": {
+            "label": "struct CrowdFunding.Contribution",
+            "members": [
+              {
+                "label": "contributor",
+                "type": "t_address_payable",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(Counter)632_storage": {
+            "label": "struct CountersUpgradeable.Counter",
+            "members": [
+              {
+                "label": "_value",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(File)1080_storage": {
+            "label": "struct CrowdFunding.File",
+            "members": [
+              {
+                "label": "ipfsHash",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(User)1077_storage": {
+            "label": "struct CrowdFunding.User",
+            "members": [
+              {
+                "label": "id",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "email",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "key",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "role",
+                "type": "t_enum(UserRole)1045",
+                "offset": 20,
+                "slot": "3"
+              },
+              {
+                "label": "status",
+                "type": "t_bool",
+                "offset": 21,
+                "slot": "3"
+              },
+              {
+                "label": "timestamp",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "4"
+              }
+            ],
+            "numberOfBytes": "160"
+          },
+          "t_struct(UserContribution)1114_storage": {
+            "label": "struct CrowdFunding.UserContribution",
+            "members": [
+              {
+                "label": "campaignId",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "timestamp",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    }
+  }
+}

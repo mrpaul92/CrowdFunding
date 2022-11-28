@@ -1,10 +1,9 @@
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 
 async function main() {
   const CrowdFundingFactory = await ethers.getContractFactory("CrowdFunding");
-  const CrowdFunding = await CrowdFundingFactory.deploy();
+  const CrowdFunding = await upgrades.deployProxy(CrowdFundingFactory, []);
   await CrowdFunding.deployed();
-
   console.log(`CrowdFunding Contract deployed to: ${CrowdFunding.address}`);
 }
 

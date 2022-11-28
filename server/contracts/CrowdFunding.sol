@@ -2,17 +2,18 @@
 pragma solidity ^0.8.17;
 
 import "hardhat/console.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract CrowdFunding is Ownable {
-    using Counters for Counters.Counter;
-    using SafeMath for uint256;
+contract CrowdFunding is Initializable, OwnableUpgradeable {
+    using CountersUpgradeable for CountersUpgradeable.Counter;
+    using SafeMathUpgradeable for uint256;
 
-    Counters.Counter private _userId;
-    Counters.Counter private _campaignId;
-    Counters.Counter private _categoryId;
+    CountersUpgradeable.Counter private _userId;
+    CountersUpgradeable.Counter private _campaignId;
+    CountersUpgradeable.Counter private _categoryId;
     string private constant ADMIN_EMAIL = "mrpaul92@gmail.com";
 
     enum UserRole {
@@ -87,8 +88,10 @@ contract CrowdFunding is Ownable {
     mapping(address => uint256[]) private _fundRaiserCampaigns;
     mapping(uint256 => Contribution[]) private _contributions;
 
-    // constructor
-    constructor() {
+    // instead of constructor using initializer
+    function initialize() public initializer {
+        __Ownable_init();
+
         // create the admin user by default
         _userId.increment();
         _users[msg.sender] = User(
