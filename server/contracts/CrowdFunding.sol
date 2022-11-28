@@ -115,7 +115,7 @@ contract CrowdFunding is Ownable {
         );
         _;
     }
-    modifier campaignDonationValidator(uint256 _id) {
+    modifier campaignContributionValidator(uint256 _id) {
         for (uint i = 0; i < _campaigns.length; i++) {
             if (_campaigns[i].id == _id) {
                 require(
@@ -284,7 +284,7 @@ contract CrowdFunding is Ownable {
 
     function contribute(
         uint256 _id
-    ) external payable hasValidAddress campaignDonationValidator(_id) {
+    ) external payable hasValidAddress campaignContributionValidator(_id) {
         for (uint i = 0; i < _campaigns.length; i++) {
             if (_campaigns[i].id == _id) {
                 // update campaign balance
@@ -326,7 +326,7 @@ contract CrowdFunding is Ownable {
         _contributions[_id].push(Contribution(payable(msg.sender), msg.value));
     }
 
-    function getUserDonations()
+    function getUserContributions()
         external
         view
         hasValidAddress
