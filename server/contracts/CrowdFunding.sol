@@ -29,7 +29,7 @@ contract CrowdFunding is Ownable {
     }
 
     struct User {
-        uint id;
+        uint256 id;
         string name;
         string email;
         address key;
@@ -41,12 +41,12 @@ contract CrowdFunding is Ownable {
         string ipfsHash;
     }
     struct Campaign {
-        uint id;
+        uint256 id;
         string name;
         string description;
         string imageHash;
-        uint goalAmount;
-        uint currentBalance;
+        uint256 goalAmount;
+        uint256 currentBalance;
         uint deadline;
         address payable creator;
         CampaignStatus campaignStatus;
@@ -55,21 +55,29 @@ contract CrowdFunding is Ownable {
         uint timestamp;
     }
     struct UserContribution {
-        uint campaignId;
-        uint amount;
+        uint256 campaignId;
+        uint256 amount;
         uint timestamp;
     }
     struct Contribution {
         address payable contributor;
-        uint amount;
+        uint256 amount;
+    }
+    struct AddCampaignPayload {
+        string _name;
+        string _description;
+        string _imageHash;
+        uint256 _goalAmount;
+        uint256 _deadline;
+        File[] _files;
     }
 
     mapping(address => User) private _users;
     Campaign[] private _campaigns;
-    mapping(uint => File[]) private _campaignFiles;
+    mapping(uint256 => File[]) private _campaignFiles;
     mapping(address => UserContribution[]) private _userContributions;
-    mapping(address => uint[]) private _fundRaiserCampaigns;
-    mapping(uint => Contribution[]) private _contributions;
+    mapping(address => uint256[]) private _fundRaiserCampaigns;
+    mapping(uint256 => Contribution[]) private _contributions;
 
     // constructor
     constructor() {
@@ -107,7 +115,7 @@ contract CrowdFunding is Ownable {
         );
         _;
     }
-    modifier campaignDonationValidator(uint _id) {
+    modifier campaignDonationValidator(uint256 _id) {
         for (uint i = 0; i < _campaigns.length; i++) {
             if (_campaigns[i].id == _id) {
                 require(
@@ -124,12 +132,34 @@ contract CrowdFunding is Ownable {
         }
         _;
     }
-    modifier onlyAfterDeadline(uint _id) {
+    modifier onlyAfterDeadline(uint256 _id) {
         for (uint i = 0; i < _campaigns.length; i++) {
             if (_campaigns[i].id == _id) {
                 require(
                     block.timestamp > _campaigns[i].deadline,
                     "Deadline not met yet!"
+                );
+            }
+        }
+        _;
+    }
+    modifier addCampaignValidator(AddCampaignPayload memory data) {
+        require(bytes(data._name).length > 10, "Name is required!");
+        require(
+            bytes(data._description).length > 50,
+            "Description is required!"
+        );
+        require(
+            bytes(data._imageHash).length == 32,
+            "Image IPFS hash is required!"
+        );
+        require(data._goalAmount > 0, "Goal Amount is required!");
+        require(data._deadline > 0, "Deadline is required!");
+        if (data._files.length > 0) {
+            for (uint i = 0; i < data._files.length; i++) {
+                require(
+                    bytes(data._files[i].ipfsHash).length == 32,
+                    "Files IPFS hash is required!"
                 );
             }
         }
@@ -145,7 +175,7 @@ contract CrowdFunding is Ownable {
         external
         hasValidAddress
         createUserValidator(_name, _email)
-        returns (uint)
+        returns (uint256)
     {
         _userId.increment();
         _users[msg.sender] = User(
@@ -177,30 +207,18 @@ contract CrowdFunding is Ownable {
     }
 
     function addCampaign(
-        string calldata _name,
-        string calldata _description,
-        string calldata _imageHash,
-        uint _goalAmount,
-        uint _deadline,
-        File[] calldata _files
-    ) external hasValidAddress isFundRaiser returns (uint) {
-        // validating here because of local variable limit
-        require(bytes(_name).length > 10, "Name is required!");
-        require(bytes(_description).length > 50, "Description is required!");
-        require(bytes(_imageHash).length == 32, "Image IPFS hash is required!");
-        require(_goalAmount > 0, "Goal Amount is required!");
-        require(_deadline > 0, "Deadline is required!");
-
+        AddCampaignPayload memory data
+    ) external hasValidAddress isFundRaiser returns (uint256) {
         _campaignId.increment();
         _campaigns.push(
             Campaign(
                 _campaignId.current(),
-                _name,
-                _description,
-                _imageHash,
-                _goalAmount,
+                data._name,
+                data._description,
+                data._imageHash,
+                data._goalAmount,
                 0,
-                _deadline,
+                data._deadline,
                 payable(msg.sender),
                 CampaignStatus.Fundraising,
                 CampaignApprovalStatus.Created,
@@ -209,16 +227,16 @@ contract CrowdFunding is Ownable {
             )
         );
 
-        for (uint i = 0; i < _files.length; i++) {
+        for (uint i = 0; i < data._files.length; i++) {
             _campaignFiles[_campaignId.current()].push(
-                File(_files[i].ipfsHash)
+                File(data._files[i].ipfsHash)
             );
         }
         emit CampaignCreated(_campaignId.current());
         return _campaignId.current();
     }
 
-    function approveCampaign(uint _id) external onlyOwner {
+    function approveCampaign(uint256 _id) external onlyOwner {
         for (uint i = 0; i < _campaigns.length; i++) {
             if (_campaigns[i].id == _id) {
                 _campaigns[i].campaignApprovalStatus = CampaignApprovalStatus
@@ -232,7 +250,7 @@ contract CrowdFunding is Ownable {
         }
     }
 
-    function rejectCampaign(uint _id) external onlyOwner {
+    function rejectCampaign(uint256 _id) external onlyOwner {
         for (uint i = 0; i < _campaigns.length; i++) {
             if (_campaigns[i].id == _id) {
                 _campaigns[i].campaignApprovalStatus = CampaignApprovalStatus
@@ -243,7 +261,7 @@ contract CrowdFunding is Ownable {
     }
 
     function completeCampaign(
-        uint _id
+        uint256 _id
     ) external onlyOwner onlyAfterDeadline(_id) {
         for (uint i = 0; i < _campaigns.length; i++) {
             if (_campaigns[i].id == _id) {
@@ -278,17 +296,34 @@ contract CrowdFunding is Ownable {
                     emit CampaignCompleted(_id);
                 }
 
-                // add into user's Donations
-                _userContributions[msg.sender].push(
-                    UserContribution(_id, msg.value, block.timestamp)
-                );
+                // add into user's Contribution
+                _addUserContribution(_id);
 
-                // add campaign donation history
-                _contributions[_id].push(
-                    Contribution(payable(msg.sender), msg.value)
-                );
+                // add campaign Contribution history
+                _addCampaignContribution(_id);
             }
         }
+    }
+
+    function _addUserContribution(uint256 _id) private {
+        bool existing = false;
+        for (uint i = 0; i < _userContributions[msg.sender].length; i++) {
+            if (_userContributions[msg.sender][i].campaignId == _id) {
+                _userContributions[msg.sender][i].amount += msg.value;
+                _userContributions[msg.sender][i].timestamp = block.timestamp;
+
+                existing = true;
+            }
+        }
+        if (!existing) {
+            _userContributions[msg.sender].push(
+                UserContribution(_id, msg.value, block.timestamp)
+            );
+        }
+    }
+
+    function _addCampaignContribution(uint256 _id) private {
+        _contributions[_id].push(Contribution(payable(msg.sender), msg.value));
     }
 
     function getUserDonations()
@@ -301,15 +336,15 @@ contract CrowdFunding is Ownable {
     }
 
     function getCampaignContributions(
-        uint _id
+        uint256 _id
     ) external view hasValidAddress returns (Contribution[] memory) {
         return _contributions[_id];
     }
 
     // Events ==============
 
-    event CampaignCreated(uint indexed id);
-    event CampaignApproved(uint indexed id);
-    event CampaignRejected(uint indexed id);
-    event CampaignCompleted(uint indexed id);
+    event CampaignCreated(uint256 indexed id);
+    event CampaignApproved(uint256 indexed id);
+    event CampaignRejected(uint256 indexed id);
+    event CampaignCompleted(uint256 indexed id);
 }
