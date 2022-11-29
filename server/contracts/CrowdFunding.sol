@@ -14,7 +14,9 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
     CountersUpgradeable.Counter private _userId;
     CountersUpgradeable.Counter private _campaignId;
     CountersUpgradeable.Counter private _categoryId;
+
     string private constant ADMIN_EMAIL = "mrpaul92@gmail.com";
+    uint private constant VERIFICATION_AMOUNT = 10000000000000000;
 
     enum UserRole {
         Admin,
@@ -133,6 +135,13 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
     }
     modifier createCategoryValidator(string calldata _name) {
         require(bytes(_name).length > 0, "Category name is required!");
+        for (uint i = 0; i < _categories.length; i++) {
+            require(
+                keccak256(abi.encodePacked(_categories[i].name)) !=
+                    keccak256(abi.encodePacked(_name)),
+                "Category name already exists!"
+            );
+        }
         _;
     }
     modifier createUserValidator(
@@ -201,6 +210,13 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
         }
         _;
     }
+    modifier requiresVerificationAmount() {
+        require(
+            msg.value >= VERIFICATION_AMOUNT,
+            "Verification cost does not met!"
+        );
+        _;
+    }
 
     // Functions ==============
 
@@ -219,6 +235,15 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
                 _categories[i].status = false;
             }
         }
+    }
+
+    function getCategories()
+        external
+        view
+        hasValidAddress
+        returns (Category[] memory)
+    {
+        return _categories;
     }
 
     function createUser(
@@ -261,7 +286,14 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
 
     function addCampaign(
         AddCampaignPayload memory data
-    ) external hasValidAddress isFundRaiser returns (uint256) {
+    )
+        external
+        payable
+        hasValidAddress
+        isFundRaiser
+        requiresVerificationAmount
+        returns (uint256)
+    {
         _campaignId.increment();
         _campaigns.push(
             Campaign(
@@ -392,6 +424,14 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
         uint256 _id
     ) external view hasValidAddress returns (Contribution[] memory) {
         return _contributions[_id];
+    }
+
+    function getVerificationAmount() external pure returns (uint) {
+        return VERIFICATION_AMOUNT;
+    }
+
+    function getContactEmail() external pure returns (string memory) {
+        return ADMIN_EMAIL;
     }
 
     // Events ==============

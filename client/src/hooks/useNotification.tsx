@@ -1,7 +1,7 @@
 import { toast, ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const useToast = (message: string, type?: "warning" | "success" | "info" | "error") => {
+const useNotification = (message: string, type?: "warning" | "success" | "info" | "error") => {
   const options: ToastOptions = {
     position: "top-right",
     autoClose: 3000,
@@ -30,4 +30,4 @@ const useToast = (message: string, type?: "warning" | "success" | "info" | "erro
   }
 };
 
-export default useToast;
+export default useNotification;

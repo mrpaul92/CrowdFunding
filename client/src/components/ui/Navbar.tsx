@@ -10,7 +10,7 @@ import { RootState, useAppDispatch } from "../../store";
 import { ethersActions } from "../../store/slices/ethers";
 import { useSelector } from "react-redux";
 import styles from "../../styles/navbar.module.css";
-import useToast from "../../hooks/useToast";
+import useNotification from "../../hooks/useNotification";
 
 const allowedChainID = Number(import.meta.env.VITE_ALLOWED_CHAINID);
 const getethereumobject = () => (window as any).ethereum;
@@ -36,7 +36,7 @@ function Navbar() {
         // chain validation
         if (newNetwork.chainId !== allowedChainID) {
           dispatch(ethersActions.updateChainStatus({ chainAllowed: false }));
-          useToast("Please connect to the " + import.meta.env.VITE_ALLOWED_CHAIN + " Network", "warning");
+          useNotification("Please connect to the " + import.meta.env.VITE_ALLOWED_CHAIN + " Network", "warning");
         }
       });
 
@@ -56,7 +56,7 @@ function Navbar() {
   }, []);
 
   const handleWalletConnect = () => {
-    if (!chainAllowed) return useToast("Please connect to the " + import.meta.env.VITE_ALLOWED_CHAIN + " Network", "error");
+    if (!chainAllowed) return useNotification("Please connect to the " + import.meta.env.VITE_ALLOWED_CHAIN + " Network", "error");
     const ethereum = getethereumobject();
     const provider = new ethers.providers.Web3Provider(ethereum);
     const signer = provider.getSigner();
@@ -79,7 +79,7 @@ function Navbar() {
       <AppBar color="transparent" position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            NFTStore
+            DCrowdFunding
           </Typography>
           {!connected && (
             <Button className={styles.connect} variant="outlined" size="small" color="inherit" onClick={handleWalletConnect}>
