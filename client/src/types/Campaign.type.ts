@@ -11,6 +11,7 @@ export interface Campaign {
   creator: string;
   campaignStatus: CampaignStatus;
   campaignApprovalStatus: CampaignApprovalStatus;
+  categoryId: number;
   status: boolean;
   timestamp: number;
 }

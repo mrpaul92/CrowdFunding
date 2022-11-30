@@ -1,0 +1,54 @@
+.campaign {
+  border: 1.5px solid #444444 !important;
+  padding: 10px !important;
+  height: 280px;
+  position: relative;
+}
+.header {
+  font-family: "monospace";
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-align: right;
+  padding: 5px 15px;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #444;
+  color: #fafafa;
+  border-bottom-left-radius: 10px;
+}
+.imageContainer {
+  margin-top: 5px;
+}
+.countDown {
+  font-family: "monospace";
+  font-size: 0.7rem;
+}
+.countDown span {
+  font-size: 0.6rem;
+  color: #999;
+}
+.btnContainer {
+  margin: 5px auto;
+  text-align: center;
+}
+.btn {
+  border-radius: 50px !important;
+  font-size: 0.6rem !important;
+  padding: 5px 20px !important;
+}
+.footer {
+  margin: 10px auto 5px;
+}
+
+.price {
+  font-family: "monospace";
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+.price span {
+  color: #999;
+  font-weight: 400;
+  font-size: 0.6rem;
+}

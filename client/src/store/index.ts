@@ -1,11 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
-import ethersSlice from "./slices/ethers";
+import campaignSlice from "./slices/campaign";
+import categorySlice from "./slices/category";
+import commonSlice from "./slices/common";
+import connectionSlice from "./slices/connection";
+import userSlice from "./slices/user";
 
 const store = configureStore({
   devTools: true,
   reducer: {
-    ethers: ethersSlice.reducer,
+    connection: connectionSlice.reducer,
+    user: userSlice.reducer,
+    category: categorySlice.reducer,
+    campaign: campaignSlice.reducer,
+    common: commonSlice.reducer,
   },
 });
 

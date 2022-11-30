@@ -61,6 +61,7 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
         address payable creator;
         CampaignStatus campaignStatus;
         CampaignApprovalStatus campaignApprovalStatus;
+        uint256 categoryId;
         bool status;
         uint timestamp;
     }
@@ -76,6 +77,7 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
     struct AddCampaignPayload {
         string _name;
         string _description;
+        uint256 _categoryId;
         string _imageHash;
         uint256 _goalAmount;
         uint256 _deadline;
@@ -194,6 +196,7 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
             bytes(data._description).length > 50,
             "Description is required!"
         );
+        require(data._categoryId > 0, "Category Id is required!");
         require(
             bytes(data._imageHash).length == 32,
             "Image IPFS hash is required!"
@@ -307,6 +310,7 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
                 payable(msg.sender),
                 CampaignStatus.Fundraising,
                 CampaignApprovalStatus.Created,
+                data._categoryId,
                 true,
                 block.timestamp
             )
