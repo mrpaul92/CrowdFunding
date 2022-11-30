@@ -3,7 +3,7 @@ import React from "react";
 import { Campaign as CampaignType } from "../../types";
 import styles from "../../styles/campaign.module.css";
 
-const Campaign = () => {
+const Campaign = ({ ...props }) => {
   const handleContribute = () => {};
   return (
     <>
@@ -13,8 +13,8 @@ const Campaign = () => {
           <br />
           <span>Remaining</span>
         </div>
-        <div className={styles.header}>Medical</div>
-        <CardMedia className={styles.imageContainer} component="img" height="180" image="https://d2aq6dqxahe4ka.cloudfront.net/assets/uploads/campaigns_gallery/Adult_Male_750-x-562.jpg" alt="name" />
+        <div className={styles.header}>{props?.categoryName}</div>
+        <CardMedia className={styles.imageContainer} component="img" height="180" image={import.meta.env.VITE_IPFS_URL + "" + props?.imageHash} alt="name" />
         <div className={styles.footer}>
           <div className={styles.price}>
             <Grid container style={{ textAlign: "center", margin: "auto" }}>

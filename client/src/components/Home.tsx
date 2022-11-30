@@ -5,8 +5,8 @@ import useWeb3Api from "../hooks/useWeb3Api";
 import { RootState, useAppDispatch } from "../store";
 import Campaign from "./ui/Campaign";
 import styles from "../styles/home.module.css";
-import { Campaign as CampaignType, CampaignApprovalStatus, CampaignStatus, Category } from "../types";
-import Signup from "./Signup";
+import { Campaign as CampaignType, Category } from "../types";
+import Start from "./Start";
 import { categoryActions } from "../store/slices/category";
 import { campaignActions } from "../store/slices/campaign";
 
@@ -14,8 +14,8 @@ function Home() {
   const dispatch = useAppDispatch();
   const api = useWeb3Api();
   const connected = useSelector((state: RootState) => state.connection.connected);
-  const categories = useSelector((state: RootState) => state.category.categories);
   const mappedCategories = useSelector((state: RootState) => state.category.mappedCategories);
+
   const campaigns = useSelector((state: RootState) => state.campaign.campaigns);
   const isRefreshRequired = useSelector((state: RootState) => state.common.isRefreshRequired);
 
@@ -62,21 +62,24 @@ function Home() {
             timestamp: Number(item.timestamp),
           };
         });
-        const filteredData = mappedData.filter(
-          (item: CampaignType) => item.status == true && item.campaignApprovalStatus == CampaignApprovalStatus.Approved && item.campaignStatus == CampaignStatus.Fundraising
-        );
-        dispatch(campaignActions.updateCampaigns({ campaigns: filteredData, mappedCategories }));
+        // const filteredData = mappedData.filter(
+        //   (item: CampaignType) => item.status == true && item.campaignApprovalStatus == CampaignApprovalStatus.Approved && item.campaignStatus == CampaignStatus.Fundraising
+        // );
+        const filteredData = mappedData;
+        dispatch(campaignActions.updateCampaigns({ campaigns: filteredData, mappedCategories: mappedCategories }));
       });
     }
   };
 
   useEffect(() => {
-    console.log("called", isRefreshRequired);
-
     getVerificationAmount();
     getAllCategories();
     getAllCampaigns();
   }, [connected, isRefreshRequired]);
+
+  useEffect(() => {
+    getAllCampaigns();
+  }, [mappedCategories]);
 
   return (
     <>
@@ -92,12 +95,12 @@ function Home() {
         )}
         {connected && (
           <>
-            <Signup minAmount={verificationAmount} />
+            <Start minAmount={verificationAmount} />
             <div className={styles.heading}>All Campaigns</div>
             <Grid container spacing={2}>
-              {categories.map((category: Category) => (
-                <Grid key={category.id} item xs={3}>
-                  <Campaign key={category.id} />
+              {campaigns.map((campaign: CampaignType) => (
+                <Grid key={campaign.id} item xs={3}>
+                  <Campaign key={campaign.id} {...campaign} />
                 </Grid>
               ))}
             </Grid>

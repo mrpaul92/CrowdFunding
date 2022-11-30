@@ -9,8 +9,9 @@ const campaignSlice = createSlice({
       const now = Date.now();
       const mappedCategories = action.payload.mappedCategories;
       const mappedCampaigns = action.payload.campaigns.map((item: Campaign) => {
-        return { ...item, categoryName: mappedCategories[item.id] };
+        return { ...item, categoryName: mappedCategories[item.id]?.name };
       });
+      state.campaigns = mappedCampaigns;
     },
   },
 });

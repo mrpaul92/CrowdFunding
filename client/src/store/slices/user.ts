@@ -9,9 +9,7 @@ const userSlice = createSlice({
       state.type = action.payload.type;
       state.name = action.payload.name;
       state.email = action.payload.email;
-      if (action.payload.name != "") {
-        state.isRegistered = true;
-      }
+      state.isRegistered = true;
     },
   },
 });

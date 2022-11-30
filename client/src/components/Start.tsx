@@ -1,9 +1,9 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import React, { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import useNotification from "../hooks/useNotification";
 import { RootState, useAppDispatch } from "../store";
@@ -12,15 +12,19 @@ import useWeb3Api from "../hooks/useWeb3Api";
 import { userActions } from "../store/slices/user";
 import { UserRole } from "../types";
 import moment from "moment";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import { commonActions } from "../store/slices/common";
+import { create } from "ipfs-http-client";
+const ipfs = create({
+  host: import.meta.env.VITE_IPFS_HOST,
+  port: import.meta.env.VITE_IPFS_PORT,
+  protocol: import.meta.env.VITE_IPFS_PROTOCOL,
+});
 
 const MIN_AMOUNT = 0.01;
 const MAX_AMOUNT = 100000;
 
-const ifpsHash = "QmUuA4oNYHWrowydpyLQ1LaDdLQknxwXpVntKahgKJsDWb";
-
-const Signup = (props: { minAmount: number }) => {
+const Start = (props: { minAmount: number }) => {
   const dispatch = useAppDispatch();
   const api = useWeb3Api();
 
@@ -34,6 +38,7 @@ const Signup = (props: { minAmount: number }) => {
 
   const chainAllowed = useSelector((state: RootState) => state.connection.chainAllowed);
   const isRegistered = useSelector((state: RootState) => state.user.isRegistered);
+
   const categories = useSelector((state: RootState) => state.category.categories);
 
   const [open, setOpen] = useState(false);
@@ -43,6 +48,7 @@ const Signup = (props: { minAmount: number }) => {
 
   const deadlineMinValue = dayjs(moment().add(2, "days").toISOString());
   const [categorySelected, setCategorySelected] = useState("");
+  const [file, setFile] = useState(null);
 
   const handleClickOpen = () => {
     if (!chainAllowed) return useNotification("Please connect to the " + import.meta.env.VITE_ALLOWED_CHAIN + " Network", "error");
@@ -61,6 +67,7 @@ const Signup = (props: { minAmount: number }) => {
       nameRef.current.value = "";
       emailRef.current.value = "";
       setButtonDisabled(false);
+      useNotification("Successfully Signed Up!", "success");
       dispatch(userActions.updateUser({ isRegistered: true, type: UserRole.Fundraiser, name: nameRef.current.value, email: emailRef.current.value }));
     } else {
       setSignUpFormError(true);
@@ -81,10 +88,15 @@ const Signup = (props: { minAmount: number }) => {
       Number(cGoalRef.current?.value) >= MIN_AMOUNT &&
       Number(cGoalRef.current?.value) <= MAX_AMOUNT &&
       cDeadlineRef.current?.value &&
-      categorySelected
+      categorySelected &&
+      file
     ) {
       setButtonDisabled(true);
       setCreateCampaignFormError(false);
+
+      // upload the file
+      const { path } = await ipfs.add(file);
+      const ipfsHash = path;
 
       const formatDate = cDeadlineRef.current.value.split("/");
       const formattedDate = formatDate[2] + "/" + formatDate[1] + "/" + formatDate[0];
@@ -96,25 +108,30 @@ const Signup = (props: { minAmount: number }) => {
           _goalAmount: ethers.utils.parseUnits("" + cGoalRef.current?.value + "", "ether"),
           _deadline: Number(moment(formattedDate).format("X")),
           _categoryId: Number(categorySelected),
-          _imageHash: ifpsHash,
+          _imageHash: ipfsHash,
           _files: [],
         },
         props.minAmount
       );
 
+      setFile(null);
       cNameRef.current.value = "";
       cDescriptionRef.current.value = "";
       cDeadlineRef.current.value = "";
-      // cGoalRef.current.value = "";
       setCategorySelected("");
       setButtonDisabled(false);
       handleClose();
-      useNotification("Campaign is pending for validation!", "success");
+      useNotification("Campaign created & sent for validation!", "success");
       dispatch(commonActions.triggerRefresh({}));
     } else {
       setCreateCampaignFormError(true);
       setButtonDisabled(false);
     }
+  };
+
+  const captureFile = async (e: any) => {
+    const file = e.target.files[0];
+    setFile(file);
   };
 
   return (
@@ -154,8 +171,7 @@ const Signup = (props: { minAmount: number }) => {
             <DialogTitle>Start a Fundraiser Campaign</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                - To launch your campaign Fill all the below details.
-                <br />- Remember to verify you also need to pay a small fee approx (0.01 {import.meta.env.VITE_ALLOWED_CHAIN}).
+                - Verification fee is (0.01 {import.meta.env.VITE_ALLOWED_CHAIN}).
                 <br />- Verification time approx 24 hours.
                 <br />
                 <br />
@@ -213,6 +229,8 @@ const Signup = (props: { minAmount: number }) => {
                   />
                 </Stack>
               </LocalizationProvider>
+              <br />
+              <input type="file" accept="image/*" onChange={captureFile} />
             </DialogContent>
             <DialogActions>
               <Button disabled={buttonDisabled} onClick={handleClose}>
@@ -229,4 +247,4 @@ const Signup = (props: { minAmount: number }) => {
   );
 };
 
-export default Signup;
+export default Start;
