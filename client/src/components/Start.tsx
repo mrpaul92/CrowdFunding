@@ -1,18 +1,18 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import useNotification from "../hooks/useNotification";
 import { RootState, useAppDispatch } from "../store";
-import styles from "../styles/signup.module.css";
+import styles from "../styles/start.module.css";
 import useWeb3Api from "../hooks/useWeb3Api";
 import { userActions } from "../store/slices/user";
 import { UserRole } from "../types";
 import moment from "moment";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { commonActions } from "../store/slices/common";
 import { create } from "ipfs-http-client";
 const ipfs = create({
@@ -47,6 +47,7 @@ const Start = (props: { minAmount: number }) => {
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
   const deadlineMinValue = dayjs(moment().add(2, "days").toISOString());
+  const [deadlineValue, setDeadlineValue] = useState<Dayjs | null>(dayjs(moment().add(2, "days").toISOString()));
   const [categorySelected, setCategorySelected] = useState("");
   const [file, setFile] = useState(null);
 
@@ -78,7 +79,9 @@ const Start = (props: { minAmount: number }) => {
   const handleChangeCategory = (e: SelectChangeEvent) => {
     setCategorySelected(e.target.value);
   };
-  const handleDeadlineChange = () => {};
+  const handleDeadlineChange = (newValue: Dayjs | null) => {
+    setDeadlineValue(newValue);
+  };
 
   const handleCreateCampaign = async () => {
     if (!chainAllowed) return useNotification("Please connect to the " + import.meta.env.VITE_ALLOWED_CHAIN + " Network", "error");
@@ -88,7 +91,7 @@ const Start = (props: { minAmount: number }) => {
       Number(cGoalRef.current?.value) >= MIN_AMOUNT &&
       Number(cGoalRef.current?.value) <= MAX_AMOUNT &&
       cDeadlineRef.current?.value &&
-      categorySelected &&
+      categorySelected != "" &&
       file
     ) {
       setButtonDisabled(true);
@@ -106,7 +109,7 @@ const Start = (props: { minAmount: number }) => {
           _name: cNameRef.current.value,
           _description: cDescriptionRef.current.value,
           _goalAmount: ethers.utils.parseUnits("" + cGoalRef.current?.value + "", "ether"),
-          _deadline: Number(moment(formattedDate).format("X")),
+          _deadline: Number(moment(formattedDate + " 23:59:59").format("X")),
           _categoryId: Number(categorySelected),
           _imageHash: ipfsHash,
           _files: [],
@@ -154,11 +157,11 @@ const Start = (props: { minAmount: number }) => {
               <TextField inputRef={nameRef} error={signUpFormError} autoFocus margin="dense" id="name" label="Your Name" type="text" fullWidth variant="outlined" required />
               <TextField inputRef={emailRef} error={signUpFormError} autoFocus margin="dense" id="email" label="Email Address" type="email" fullWidth variant="outlined" required />
             </DialogContent>
-            <DialogActions>
-              <Button disabled={buttonDisabled} onClick={handleClose}>
+            <DialogActions className={styles.dialogAction}>
+              <Button className={styles.btn} variant="outlined" size="small" color="inherit" disabled={buttonDisabled} onClick={handleClose}>
                 Cancel
               </Button>
-              <Button disabled={buttonDisabled} onClick={handleSignUp}>
+              <Button className={styles.btn} variant="outlined" size="small" color="inherit" disabled={buttonDisabled} onClick={handleSignUp}>
                 Signup
               </Button>
             </DialogActions>
@@ -171,7 +174,11 @@ const Start = (props: { minAmount: number }) => {
             <DialogTitle>Start a Fundraiser Campaign</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                - Verification fee is (0.01 {import.meta.env.VITE_ALLOWED_CHAIN}).
+                - Verification fee is{" "}
+                <strong>
+                  {ethers.utils.formatEther(BigNumber.from(props.minAmount.toString()))} {import.meta.env.VITE_ALLOWED_CHAIN}
+                </strong>
+                .
                 <br />- Verification time approx 24 hours.
                 <br />
                 <br />
@@ -223,20 +230,20 @@ const Start = (props: { minAmount: number }) => {
                     label="Campaign Deadline"
                     inputFormat="DD/MM/YYYY"
                     minDate={deadlineMinValue}
-                    value={deadlineMinValue}
+                    value={deadlineValue}
                     onChange={handleDeadlineChange}
                     renderInput={(params) => <TextField {...params} required />}
                   />
                 </Stack>
               </LocalizationProvider>
               <br />
-              <input type="file" accept="image/*" onChange={captureFile} />
+              <input style={createCampaignFormError ? { borderColor: "#d32f2f" } : {}} type="file" accept="image/*" onChange={captureFile} />
             </DialogContent>
-            <DialogActions>
-              <Button disabled={buttonDisabled} onClick={handleClose}>
+            <DialogActions className={styles.dialogAction}>
+              <Button className={styles.btn} variant="outlined" size="small" color="inherit" disabled={buttonDisabled} onClick={handleClose}>
                 Cancel
               </Button>
-              <Button disabled={buttonDisabled} onClick={handleCreateCampaign}>
+              <Button className={styles.btn} variant="outlined" size="small" color="inherit" disabled={buttonDisabled} onClick={handleCreateCampaign}>
                 Create Campaign
               </Button>
             </DialogActions>

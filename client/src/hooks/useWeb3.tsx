@@ -15,10 +15,10 @@ const useWeb3 = () => {
   const [signer, setSigner] = useState<ethers.providers.JsonRpcSigner>();
   const [contract, setContract] = useState<ethers.Contract>();
 
-  const connected = useSelector((state: RootState) => state.connection.connected);
-  const account = useSelector((state: RootState) => state.connection.account);
-  const chainAllowed = useSelector((state: RootState) => state.connection.chainAllowed);
-  const chainId = useSelector((state: RootState) => state.connection.chainId);
+  // const connected = useSelector((state: RootState) => state.connection.connected);
+  // const account = useSelector((state: RootState) => state.connection.account);
+  // const chainAllowed = useSelector((state: RootState) => state.connection.chainAllowed);
+  // const chainId = useSelector((state: RootState) => state.connection.chainId);
 
   useEffect(() => {
     const ethereum = getethereumobject();
@@ -40,6 +40,11 @@ const useWeb3 = () => {
           dispatch(connectionActions.updateConnection({ connected: false, account: "", chainAllowed: false, chainId: 0 }));
           // useNotification("Please connect to the " + import.meta.env.VITE_ALLOWED_CHAIN + " Network", "warning");
         }
+      });
+
+      // on account change
+      ethereum.on("accountsChanged", () => {
+        window.location.reload();
       });
 
       provider

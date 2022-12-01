@@ -1,17 +1,15 @@
-import { Campaign } from "./../../types";
 import { createSlice } from "@reduxjs/toolkit";
 
 const campaignSlice = createSlice({
   name: "campaign",
-  initialState: { campaigns: [] },
+  initialState: { campaigns: [], pending: [], completed: [], expired: [], successful: [] },
   reducers: {
     updateCampaigns: (state, action) => {
-      const now = Date.now();
-      const mappedCategories = action.payload.mappedCategories;
-      const mappedCampaigns = action.payload.campaigns.map((item: Campaign) => {
-        return { ...item, categoryName: mappedCategories[item.id]?.name };
-      });
-      state.campaigns = mappedCampaigns;
+      state.campaigns = action.payload.campaigns;
+      state.pending = action.payload.pending;
+      state.completed = action.payload.completed;
+      state.expired = action.payload.expired;
+      state.successful = action.payload.successful;
     },
   },
 });

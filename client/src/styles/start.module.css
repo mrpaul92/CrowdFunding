@@ -1,0 +1,13 @@
+.fundraiserSignup {
+  margin: 40px auto 20px;
+  text-align: center;
+}
+.btn {
+  border-radius: 50px !important;
+  font-size: 0.6rem !important;
+  padding: 10px 20px !important;
+}
+
+.dialogAction {
+  padding-right: 20px !important;
+}

@@ -68,7 +68,7 @@ function Navbar() {
       <AppBar color="transparent" position="static">
         <Toolbar>
           <Typography className={styles.logo} variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Logo.
+            FundRaiser.
           </Typography>
           {!connected && (
             <Button className={styles.connect} variant="outlined" size="small" color="inherit" onClick={handleWalletConnect}>
