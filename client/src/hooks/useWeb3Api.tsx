@@ -96,6 +96,13 @@ const useWeb3Api = () => {
       return txn;
     }
   };
+  const contribute = async (id: number, amount: number) => {
+    if (contract) {
+      const txn = await contract.contribute(id, { value: ethers.utils.parseEther(amount.toString()) });
+      await txn.wait();
+      return txn;
+    }
+  };
   return {
     getCurrentUser,
     getUserContributions,
@@ -111,6 +118,7 @@ const useWeb3Api = () => {
     approveCampaign,
     rejectCampaign,
     completeCampaign,
+    contribute,
   };
 };
 export default useWeb3Api;

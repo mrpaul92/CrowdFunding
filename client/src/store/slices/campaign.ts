@@ -2,9 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const campaignSlice = createSlice({
   name: "campaign",
-  initialState: { campaigns: [], pending: [], completed: [], expired: [], successful: [] },
+  initialState: { allCampaigns: [], campaigns: [], pending: [], completed: [], expired: [], successful: [] },
   reducers: {
     updateCampaigns: (state, action) => {
+      state.allCampaigns = action.payload.allCampaigns;
       state.campaigns = action.payload.campaigns;
       state.pending = action.payload.pending;
       state.completed = action.payload.completed;

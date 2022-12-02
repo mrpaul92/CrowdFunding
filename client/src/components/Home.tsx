@@ -16,13 +16,15 @@ function Home() {
   const dispatch = useAppDispatch();
   const api = useWeb3Api();
   const connected = useSelector((state: RootState) => state.connection.connected);
-  const mappedCategories = useSelector((state: RootState) => state.category.mappedCategories);
-
+  const account = useSelector((state: RootState) => state.connection.account);
+  const allCampaigns = useSelector((state: RootState) => state.campaign.allCampaigns);
   const campaigns = useSelector((state: RootState) => state.campaign.campaigns);
   const isRefreshRequired = useSelector((state: RootState) => state.common.isRefreshRequired);
   const userData = useSelector((state: RootState) => state.user);
 
   const [verificationAmount, setVerificationAmount] = useState(0);
+  const [myCampaigns, setMycampaigns] = useState([]);
+  const [view, setView] = useState("all");
 
   const getVerificationAmount = async () => {
     if (connected) {
@@ -62,11 +64,13 @@ function Home() {
             categoryId: Number(item.categoryId),
             campaignStatus: item.campaignStatus,
             campaignApprovalStatus: item.campaignApprovalStatus,
+            creator: item.creator,
             status: item.status,
             timestamp: Number(item.timestamp),
           };
         });
 
+        // Global campaigns
         const filteredData = mappedData.filter(
           (item: CampaignType) =>
             item.status == true && item.campaignApprovalStatus == CampaignApprovalStatus.Approved && item.campaignStatus == CampaignStatus.Fundraising && item.deadline > Number(moment().format("X"))
@@ -95,10 +99,25 @@ function Home() {
             item.status == true && item.campaignApprovalStatus == CampaignApprovalStatus.Approved && item.campaignStatus == CampaignStatus.Completed && item.deadline < Number(moment().format("X"))
         );
         dispatch(
-          campaignActions.updateCampaigns({ campaigns: filteredData, pending: filteredPendingData, completed: filteredCompletedData, expired: filteredExpiredData, successful: filteredSuccessfulData })
+          campaignActions.updateCampaigns({
+            allCampaigns: mappedData,
+            campaigns: filteredData,
+            pending: filteredPendingData,
+            completed: filteredCompletedData,
+            expired: filteredExpiredData,
+            successful: filteredSuccessfulData,
+          })
         );
       });
     }
+  };
+  const handleMyCampaigns = () => {
+    const filterMyCampaigns = allCampaigns.filter((item: CampaignType) => item.creator.toLowerCase() == account);
+    setMycampaigns(filterMyCampaigns);
+    setView("my");
+  };
+  const handleAllCampaigns = () => {
+    setView("all");
   };
 
   useEffect(() => {
@@ -125,14 +144,32 @@ function Home() {
           {connected && (
             <>
               <Start minAmount={verificationAmount} />
-              <div className={styles.heading}>All Campaigns</div>
-              <Grid container spacing={2}>
-                {campaigns.map((campaign: CampaignType) => (
-                  <Grid key={campaign.id} item xs={3}>
-                    <Campaign key={campaign.id} {...campaign} />
-                  </Grid>
-                ))}
-              </Grid>
+              <div className={styles.heading} style={{ cursor: "pointer" }}>
+                <span onClick={handleAllCampaigns}>All Campaigns</span>{" "}
+                {userData.type == UserRole.Fundraiser && (
+                  <>
+                    | <span onClick={handleMyCampaigns}>My Campaigns</span>
+                  </>
+                )}
+              </div>
+              {view == "all" && (
+                <Grid container spacing={2}>
+                  {campaigns.map((campaign: CampaignType) => (
+                    <Grid key={campaign.id} item xs={3}>
+                      <Campaign key={campaign.id} {...campaign} />
+                    </Grid>
+                  ))}
+                </Grid>
+              )}
+              {view == "my" && (
+                <Grid container spacing={2}>
+                  {myCampaigns.map((campaign: CampaignType) => (
+                    <Grid key={campaign.id} item xs={3}>
+                      <Campaign key={campaign.id} {...campaign} isOwner="true" />
+                    </Grid>
+                  ))}
+                </Grid>
+              )}
             </>
           )}
         </Container>
