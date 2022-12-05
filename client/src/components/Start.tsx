@@ -14,6 +14,7 @@ import { UserRole } from "../types";
 import moment from "moment";
 import { BigNumber, ethers } from "ethers";
 import { commonActions } from "../store/slices/common";
+import slugify from "slugify";
 import { create } from "ipfs-http-client";
 const ipfs = create({
   host: import.meta.env.VITE_IPFS_HOST,
@@ -104,9 +105,11 @@ const Start = (props: { minAmount: number }) => {
       const formatDate = cDeadlineRef.current.value.split("/");
       const formattedDate = formatDate[2] + "/" + formatDate[1] + "/" + formatDate[0];
 
+      const slug = slugify(cNameRef.current.value, { lower: true, strict: true, trim: true });
       await api.addCampaign(
         {
           _name: cNameRef.current.value,
+          _slug: slug,
           _description: cDescriptionRef.current.value,
           _goalAmount: ethers.utils.parseUnits("" + cGoalRef.current?.value + "", "ether"),
           _deadline: Number(moment(formattedDate + " 23:59:59").format("X")),
@@ -114,6 +117,7 @@ const Start = (props: { minAmount: number }) => {
           _imageHash: ipfsHash,
           _files: [],
         },
+        slug,
         props.minAmount
       );
 

@@ -67,10 +67,10 @@ const useWeb3Api = () => {
       return txn;
     }
   };
-  const addCampaign = async (data: AddCampaignPayload, minAmount: number) => {
+  const addCampaign = async (data: AddCampaignPayload, slug: string, minAmount: number) => {
     if (contract) {
       const payableAmount = ethers.utils.formatEther(BigNumber.from(minAmount.toString()));
-      const txn = await contract.addCampaign(data, { value: ethers.utils.parseEther(payableAmount) });
+      const txn = await contract.addCampaign(data, slug, { value: ethers.utils.parseEther(payableAmount) });
       await txn.wait();
       return txn;
     }

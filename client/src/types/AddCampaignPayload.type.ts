@@ -2,6 +2,7 @@ import { BigNumber } from "ethers";
 import { File } from "./File.type";
 export interface AddCampaignPayload {
   _name: string;
+  _slug: string;
   _description: string;
   _categoryId: number;
   _imageHash: string;

@@ -56,6 +56,7 @@ function Home() {
           return {
             id: Number(item.id),
             name: item.name,
+            slug: item.slug,
             description: item.description,
             imageHash: item.imageHash,
             goalAmount: Number(item.goalAmount),
@@ -113,6 +114,7 @@ function Home() {
   };
   const handleMyCampaigns = () => {
     const filterMyCampaigns = allCampaigns.filter((item: CampaignType) => item.creator.toLowerCase() == account);
+    console.log(filterMyCampaigns);
     setMycampaigns(filterMyCampaigns);
     setView("my");
   };

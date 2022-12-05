@@ -196,14 +196,6 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
     }
     modifier addCampaignValidator(AddCampaignPayload memory data) {
         require(bytes(data._name).length > 10, "Name is required!");
-        // slug must be unique
-        for (uint i = 0; i < _campaigns.length; i++) {
-            require(
-                keccak256(abi.encodePacked(_campaigns[i].slug)) !=
-                    keccak256(abi.encodePacked(data._slug)),
-                "Slug must be unique!"
-            );
-        }
         require(
             bytes(data._description).length > 50,
             "Description is required!"
@@ -230,6 +222,16 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
             msg.value >= VERIFICATION_AMOUNT,
             "Verification cost does not met!"
         );
+        _;
+    }
+    modifier isUniqueSlug(string calldata _slug) {
+        for (uint i = 0; i < _campaigns.length; i++) {
+            require(
+                keccak256(abi.encodePacked(_campaigns[i].slug)) !=
+                    keccak256(abi.encodePacked(_slug)),
+                "Campaign name already exists!"
+            );
+        }
         _;
     }
 
@@ -300,12 +302,14 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
     }
 
     function addCampaign(
-        AddCampaignPayload memory data
+        AddCampaignPayload memory data,
+        string calldata _slug
     )
         external
         payable
         hasValidAddress
         isFundRaiser
+        isUniqueSlug(_slug)
         requiresVerificationAmount
         returns (uint256)
     {

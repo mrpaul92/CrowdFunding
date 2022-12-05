@@ -3,6 +3,7 @@ import { CampaignStatus } from "./CampaignStatus.type";
 export interface Campaign {
   id: number;
   name: string;
+  slug: string;
   description: string;
   imageHash: string;
   goalAmount: number;
