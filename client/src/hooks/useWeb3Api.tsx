@@ -103,6 +103,31 @@ const useWeb3Api = () => {
       return txn;
     }
   };
+  const getCampaignById = async (id: number) => {
+    if (contract) {
+      const data = await contract.getCampaignById(id);
+      return data;
+    }
+  };
+  const getCampaignBySlug = async (slug: string) => {
+    if (contract) {
+      const data = await contract.getCampaignBySlug(slug);
+      return data;
+    }
+  };
+  const getWithdrawableBalance = async () => {
+    if (contract) {
+      const data = await contract.getWithdrawableBalance();
+      return data;
+    }
+  };
+  const withdraw = async () => {
+    if (contract) {
+      const txn = await contract.withdraw();
+      await txn.wait();
+      return txn;
+    }
+  };
   return {
     getCurrentUser,
     getUserContributions,
@@ -119,6 +144,10 @@ const useWeb3Api = () => {
     rejectCampaign,
     completeCampaign,
     contribute,
+    getCampaignById,
+    getCampaignBySlug,
+    getWithdrawableBalance,
+    withdraw,
   };
 };
 export default useWeb3Api;

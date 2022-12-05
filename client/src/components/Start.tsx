@@ -60,9 +60,14 @@ const Start = (props: { minAmount: number }) => {
     setOpen(false);
   };
 
+  const validateEmail = (email: string) => {
+    const regEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regEX.test(email);
+  };
+
   const handleSignUp = async () => {
     if (!chainAllowed) return useNotification("Please connect to the " + import.meta.env.VITE_ALLOWED_CHAIN + " Network", "error");
-    if (nameRef.current?.value && emailRef.current?.value) {
+    if (nameRef.current?.value && emailRef.current?.value && validateEmail(emailRef.current.value)) {
       setButtonDisabled(true);
       setSignUpFormError(false);
       await api.createUser(nameRef.current.value, emailRef.current.value);
@@ -106,30 +111,35 @@ const Start = (props: { minAmount: number }) => {
       const formattedDate = formatDate[2] + "/" + formatDate[1] + "/" + formatDate[0];
 
       const slug = slugify(cNameRef.current.value, { lower: true, strict: true, trim: true });
-      await api.addCampaign(
-        {
-          _name: cNameRef.current.value,
-          _slug: slug,
-          _description: cDescriptionRef.current.value,
-          _goalAmount: ethers.utils.parseUnits("" + cGoalRef.current?.value + "", "ether"),
-          _deadline: Number(moment(formattedDate + " 23:59:59").format("X")),
-          _categoryId: Number(categorySelected),
-          _imageHash: ipfsHash,
-          _files: [],
-        },
-        slug,
-        props.minAmount
-      );
+      try {
+        await api.addCampaign(
+          {
+            _name: cNameRef.current.value,
+            _slug: slug,
+            _description: cDescriptionRef.current.value,
+            _goalAmount: ethers.utils.parseUnits("" + cGoalRef.current?.value + "", "ether"),
+            _deadline: Number(moment(formattedDate + " 23:59:59").format("X")),
+            _categoryId: Number(categorySelected),
+            _imageHash: ipfsHash,
+            _files: [],
+          },
+          slug,
+          props.minAmount
+        );
 
-      setFile(null);
-      cNameRef.current.value = "";
-      cDescriptionRef.current.value = "";
-      cDeadlineRef.current.value = "";
-      setCategorySelected("");
-      setButtonDisabled(false);
-      handleClose();
-      useNotification("Campaign created & sent for validation!", "success");
-      dispatch(commonActions.triggerRefresh({}));
+        setFile(null);
+        cNameRef.current.value = "";
+        cDescriptionRef.current.value = "";
+        cDeadlineRef.current.value = "";
+        setCategorySelected("");
+        setButtonDisabled(false);
+        handleClose();
+        useNotification("Campaign created & sent for validation!", "success");
+        dispatch(commonActions.triggerRefresh({}));
+      } catch (err) {
+        useNotification("Same Campaign name already exists!", "error");
+        setButtonDisabled(false);
+      }
     } else {
       setCreateCampaignFormError(true);
       setButtonDisabled(false);

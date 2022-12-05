@@ -27,6 +27,10 @@ function Navbar() {
   const chainAllowed = useSelector((state: RootState) => state.connection.chainAllowed);
   const chainId = useSelector((state: RootState) => state.connection.chainId);
 
+  const handleLogoClick = () => {
+    window.location = "/" as any;
+  };
+
   const getUserData = async () => {
     const data = await api.getCurrentUser();
     if (data.status) {
@@ -67,8 +71,8 @@ function Navbar() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar color="transparent" position="static">
         <Toolbar>
-          <Typography className={styles.logo} variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            FundRaiser.
+          <Typography className={styles.logo} variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={handleLogoClick}>
+            FundRaiser
           </Typography>
           {!connected && (
             <Button className={styles.connect} variant="outlined" size="small" color="inherit" onClick={handleWalletConnect}>

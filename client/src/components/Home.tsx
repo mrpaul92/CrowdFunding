@@ -114,7 +114,6 @@ function Home() {
   };
   const handleMyCampaigns = () => {
     const filterMyCampaigns = allCampaigns.filter((item: CampaignType) => item.creator.toLowerCase() == account);
-    console.log(filterMyCampaigns);
     setMycampaigns(filterMyCampaigns);
     setView("my");
   };

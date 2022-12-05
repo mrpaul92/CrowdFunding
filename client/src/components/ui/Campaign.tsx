@@ -3,6 +3,7 @@ import { BigNumber, ethers } from "ethers";
 import moment from "moment";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import useNotification from "../../hooks/useNotification";
 import useWeb3Api from "../../hooks/useWeb3Api";
 import { RootState, useAppDispatch } from "../../store";
@@ -13,6 +14,7 @@ import { CampaignApprovalStatus, CampaignStatus, UserRole } from "../../types";
 const Campaign = ({ ...props }) => {
   const dispatch = useAppDispatch();
   const api = useWeb3Api();
+  const navigate = useNavigate();
   const mappedCategories = useSelector((state: RootState) => state.category.mappedCategories);
   const userType = useSelector((state: RootState) => state.user.type);
   const [isContributeDialogOpen, setIsContributeDialogOpen] = useState(false);
@@ -77,6 +79,12 @@ const Campaign = ({ ...props }) => {
     setButtonDisabled(false);
   };
 
+  const handleOpenCampaignDetails = (slug: string) => {
+    navigate("/" + slug, {
+      replace: true,
+    });
+  };
+
   return (
     <>
       <Dialog open={isContributeDialogOpen} onClose={handleClose}>
@@ -131,7 +139,14 @@ const Campaign = ({ ...props }) => {
           )}
         </div>
         <div className={styles.header}>{mappedCategories[props.categoryId]?.name}</div>
-        <CardMedia className={styles.imageContainer} component="img" height="180" image={import.meta.env.VITE_IPFS_URL + "" + props?.imageHash} alt="name" />
+        <CardMedia
+          className={styles.imageContainer}
+          component="img"
+          height="180"
+          image={import.meta.env.VITE_IPFS_URL + "" + props?.imageHash}
+          alt={props.name}
+          onClick={() => handleOpenCampaignDetails(props.slug)}
+        />
         <div className={styles.footer}>
           <div className={styles.price}>
             <Grid container style={{ textAlign: "center", margin: "auto" }}>

@@ -20,6 +20,7 @@
 }
 .imageContainer {
   margin-top: 5px;
+  cursor: pointer;
 }
 .countDown {
   font-family: "monospace";
