@@ -17,6 +17,7 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
 
     string private constant ADMIN_EMAIL = "mrpaul92@gmail.com";
     uint private constant VERIFICATION_AMOUNT = 10000000000000000;
+    uint withdrawableBalance;
 
     enum UserRole {
         Admin,
@@ -53,6 +54,7 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
     struct Campaign {
         uint256 id;
         string name;
+        string slug;
         string description;
         string imageHash;
         uint256 goalAmount;
@@ -76,6 +78,7 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
     }
     struct AddCampaignPayload {
         string _name;
+        string _slug;
         string _description;
         uint256 _categoryId;
         string _imageHash;
@@ -91,6 +94,7 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
     mapping(address => UserContribution[]) private _userContributions;
     mapping(address => uint256[]) private _fundRaiserCampaigns;
     mapping(uint256 => Contribution[]) private _contributions;
+    mapping(string => uint256) private _slugToCampaignIdMapping;
 
     // instead of constructor using initializer
     function initialize() public initializer {
@@ -192,6 +196,14 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
     }
     modifier addCampaignValidator(AddCampaignPayload memory data) {
         require(bytes(data._name).length > 10, "Name is required!");
+        // slug must be unique
+        for (uint i = 0; i < _campaigns.length; i++) {
+            require(
+                keccak256(abi.encodePacked(_campaigns[i].slug)) !=
+                    keccak256(abi.encodePacked(data._slug)),
+                "Slug must be unique!"
+            );
+        }
         require(
             bytes(data._description).length > 50,
             "Description is required!"
@@ -302,6 +314,7 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
             Campaign(
                 _campaignId.current(),
                 data._name,
+                data._slug,
                 data._description,
                 data._imageHash,
                 data._goalAmount,
@@ -322,6 +335,9 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
             );
         }
         emit CampaignCreated(_campaignId.current());
+        _slugToCampaignIdMapping[data._slug] = _campaignId.current();
+
+        withdrawableBalance += VERIFICATION_AMOUNT;
         return _campaignId.current();
     }
 
@@ -358,6 +374,11 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
                 // transfer the goal amount to the creator
                 _campaigns[i].creator.transfer(_campaigns[i].currentBalance);
                 emit CampaignCompleted(_id);
+                if (_campaigns[i].currentBalance > _campaigns[i].goalAmount) {
+                    uint extraAmount = _campaigns[i].currentBalance -
+                        _campaigns[i].goalAmount;
+                    withdrawableBalance += extraAmount;
+                }
             }
         }
     }
@@ -383,6 +404,9 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
                     _campaigns[i].campaignStatus = CampaignStatus.Completed;
                     _campaigns[i].creator.transfer(_campaigns[i].goalAmount);
                     emit CampaignCompleted(_id);
+                    uint extraAmount = _campaigns[i].currentBalance -
+                        _campaigns[i].goalAmount;
+                    withdrawableBalance += extraAmount;
                 }
 
                 // add into user's Contribution
@@ -430,6 +454,68 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
         return _contributions[_id];
     }
 
+    function getCampaignById(
+        uint256 _id
+    ) public view hasValidAddress returns (Campaign memory) {
+        Campaign memory campaignData = Campaign(
+            0,
+            "",
+            "",
+            "",
+            "",
+            0,
+            0,
+            0,
+            payable(address(this)),
+            CampaignStatus.Completed,
+            CampaignApprovalStatus.Rejected,
+            0,
+            false,
+            block.timestamp
+        );
+        for (uint i = 0; i < _campaigns.length; i++) {
+            if (_campaigns[i].id == _id) {
+                campaignData = Campaign(
+                    _campaigns[i].id,
+                    _campaigns[i].name,
+                    _campaigns[i].slug,
+                    _campaigns[i].description,
+                    _campaigns[i].imageHash,
+                    _campaigns[i].goalAmount,
+                    _campaigns[i].currentBalance,
+                    _campaigns[i].deadline,
+                    _campaigns[i].creator,
+                    _campaigns[i].campaignStatus,
+                    _campaigns[i].campaignApprovalStatus,
+                    _campaigns[i].categoryId,
+                    _campaigns[i].status,
+                    _campaigns[i].timestamp
+                );
+            }
+        }
+        return campaignData;
+    }
+
+    function getCampaignBySlug(
+        string calldata _slug
+    ) public view hasValidAddress returns (Campaign memory) {
+        uint256 campaignId = _slugToCampaignIdMapping[_slug];
+        require(campaignId > 0, "Campaign Not found!");
+        Campaign memory campaignData = getCampaignById(campaignId);
+        return campaignData;
+    }
+
+    function getWithdrawableBalance() public view onlyOwner returns (uint) {
+        return withdrawableBalance;
+    }
+
+    function withdraw() external onlyOwner {
+        address ownerAddress = OwnableUpgradeable.owner();
+        payable(ownerAddress).transfer(withdrawableBalance);
+        emit withdrawalComplete(withdrawableBalance);
+        withdrawableBalance = 0;
+    }
+
     function getVerificationAmount() external pure returns (uint) {
         return VERIFICATION_AMOUNT;
     }
@@ -444,4 +530,5 @@ contract CrowdFunding is Initializable, OwnableUpgradeable {
     event CampaignApproved(uint256 indexed id);
     event CampaignRejected(uint256 indexed id);
     event CampaignCompleted(uint256 indexed id);
+    event withdrawalComplete(uint256 indexed amount);
 }
