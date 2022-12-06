@@ -5,7 +5,6 @@
   position: relative;
 }
 .header {
-  font-family: "monospace";
   font-weight: 700;
   font-size: 0.8rem;
   text-align: right;
@@ -23,7 +22,6 @@
   cursor: pointer;
 }
 .countDown {
-  font-family: "monospace";
   font-size: 0.7rem;
 }
 .countDown span {
@@ -38,13 +36,13 @@
   border-radius: 50px !important;
   font-size: 0.6rem !important;
   padding: 5px 20px !important;
+  font-family: monospace !important;
 }
 .footer {
   margin: 10px auto 5px;
 }
 
 .price {
-  font-family: "monospace";
   font-size: 0.7rem;
   font-weight: 800;
 }

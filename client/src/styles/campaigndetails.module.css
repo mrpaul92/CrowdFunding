@@ -1,0 +1,46 @@
+.imageContainer img {
+  height: 400px;
+  width: 100%;
+}
+.share {
+  padding: 8px 15px;
+  border: 1px solid black;
+  color: black;
+  text-decoration: none;
+  margin-top: 10px;
+  border-radius: 50px;
+  display: inline-block;
+}
+.rightContainer {
+  margin: auto 50px;
+}
+.btn {
+  width: 100%;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  border-radius: 50px !important;
+  font-family: monospace !important;
+  font-weight: bold !important;
+  font-size: 1rem !important;
+}
+.price {
+  font-size: 0.9rem;
+  font-weight: 800;
+  margin: 15px auto;
+  text-align: center;
+}
+.price span {
+  color: #999;
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+li {
+  padding-left: 0 !important;
+}
+li div {
+  margin: auto;
+}
+li div span {
+  font-family: monospace !important;
+  font-size: 0.6rem !important;
+}
