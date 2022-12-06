@@ -3,7 +3,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import useNotification from "../hooks/useNotification";
 import { RootState, useAppDispatch } from "../store";
@@ -16,6 +16,7 @@ import { BigNumber, ethers } from "ethers";
 import { commonActions } from "../store/slices/common";
 import slugify from "slugify";
 import { create } from "ipfs-http-client";
+import web3Context from "../contexts/web3context";
 const ipfs = create({
   host: import.meta.env.VITE_IPFS_HOST,
   port: import.meta.env.VITE_IPFS_PORT,
@@ -27,7 +28,8 @@ const MAX_AMOUNT = 100000;
 
 const Start = (props: { minAmount: number }) => {
   const dispatch = useAppDispatch();
-  const api = useWeb3Api();
+  const { contract } = useContext(web3Context);
+  const api = useWeb3Api(contract);
 
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);

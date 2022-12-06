@@ -2,8 +2,7 @@ import { BigNumber, ethers } from "ethers";
 import { AddCampaignPayload } from "../types";
 import useWeb3 from "./useWeb3";
 
-const useWeb3Api = () => {
-  const { contract } = useWeb3();
+const useWeb3Api = (contract: ethers.Contract | null) => {
   const getCurrentUser = async () => {
     if (contract) {
       const data = await contract.getCurrentUser();

@@ -1,5 +1,5 @@
 import { Container, Grid } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import useWeb3Api from "../hooks/useWeb3Api";
 import { RootState, useAppDispatch } from "../store";
@@ -11,10 +11,12 @@ import { categoryActions } from "../store/slices/category";
 import { campaignActions } from "../store/slices/campaign";
 import moment from "moment";
 import Dashboard from "./Dashboard";
+import web3Context from "../contexts/web3context";
 
-function Home() {
+const Home = () => {
   const dispatch = useAppDispatch();
-  const api = useWeb3Api();
+  const { contract } = useContext(web3Context);
+  const api = useWeb3Api(contract);
   const connected = useSelector((state: RootState) => state.connection.connected);
   const account = useSelector((state: RootState) => state.connection.account);
   const allCampaigns = useSelector((state: RootState) => state.campaign.allCampaigns);
@@ -177,6 +179,6 @@ function Home() {
       )}
     </>
   );
-}
+};
 
 export default Home;

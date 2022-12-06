@@ -1,9 +1,10 @@
 import { Button, Card, CardMedia, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
 import { BigNumber, ethers } from "ethers";
 import moment from "moment";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import web3Context from "../../contexts/web3context";
 import useNotification from "../../hooks/useNotification";
 import useWeb3Api from "../../hooks/useWeb3Api";
 import { RootState, useAppDispatch } from "../../store";
@@ -13,7 +14,8 @@ import { CampaignApprovalStatus, CampaignStatus, UserRole } from "../../types";
 
 const Campaign = ({ ...props }) => {
   const dispatch = useAppDispatch();
-  const api = useWeb3Api();
+  const { contract } = useContext(web3Context);
+  const api = useWeb3Api(contract);
   const navigate = useNavigate();
   const mappedCategories = useSelector((state: RootState) => state.category.mappedCategories);
   const userType = useSelector((state: RootState) => state.user.type);

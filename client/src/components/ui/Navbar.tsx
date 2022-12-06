@@ -7,19 +7,19 @@ import { RootState, useAppDispatch } from "../../store";
 import { useSelector } from "react-redux";
 import styles from "../../styles/navbar.module.css";
 import useNotification from "../../hooks/useNotification";
-import useWeb3 from "../../hooks/useWeb3";
 import { connectionActions } from "../../store/slices/connection";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { utils } from "ethers";
 import useWeb3Api from "../../hooks/useWeb3Api";
 import { userActions } from "../../store/slices/user";
+import web3Context from "../../contexts/web3context";
 
 const allowedChainID = Number(import.meta.env.VITE_ALLOWED_CHAINID);
 
-function Navbar() {
+const Navbar = () => {
   const dispatch = useAppDispatch();
-  const { provider } = useWeb3();
-  const api = useWeb3Api();
+  const { provider, contract } = useContext(web3Context);
+  const api = useWeb3Api(contract);
   const [balance, setBalance] = useState("");
   const [name, setName] = useState("");
   const connected = useSelector((state: RootState) => state.connection.connected);
@@ -42,7 +42,7 @@ function Navbar() {
   useEffect(() => {
     if (account) {
       getUserData();
-      provider?.getBalance(account).then((balance) => {
+      provider.getBalance(account).then((balance: any) => {
         const bal = utils.formatEther(balance.toString());
         setBalance(bal);
       });
@@ -54,7 +54,7 @@ function Navbar() {
     if (provider) {
       provider
         .send("eth_requestAccounts", [])
-        .then(async (accounts) => {
+        .then(async (accounts: any) => {
           if (accounts.length > 0) {
             const networkDetails = await provider.getNetwork();
             if (networkDetails.chainId == allowedChainID) {
@@ -62,7 +62,7 @@ function Navbar() {
             }
           }
         })
-        .catch((err) => {
+        .catch(() => {
           useNotification("Please try again!", "error");
         });
     }
@@ -93,6 +93,6 @@ function Navbar() {
       </AppBar>
     </Box>
   );
-}
+};
 
 export default Navbar;

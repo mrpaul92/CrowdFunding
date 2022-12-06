@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, List, ListItem, ListItemText, TextField, Typography } from "@mui/material";
 import { Container } from "@mui/system";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import useNotification from "../hooks/useNotification";
@@ -8,16 +8,16 @@ import useWeb3Api from "../hooks/useWeb3Api";
 import { RootState, useAppDispatch } from "../store";
 import styles from "../styles/campaigndetails.module.css";
 import ShareIcon from "@mui/icons-material/Share";
-import useWeb3 from "../hooks/useWeb3";
 import { commonActions } from "../store/slices/common";
 import { BigNumber, ethers } from "ethers";
 import moment from "moment";
 import { CampaignApprovalStatus, CampaignStatus } from "../types";
+import web3Context from "../contexts/web3context";
 
 const CampaignDetails = () => {
   const dispatch = useAppDispatch();
-  const { contract } = useWeb3();
-  const api = useWeb3Api();
+  const { contract } = useContext(web3Context);
+  const api = useWeb3Api(contract);
   const { slug } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [isValidSlug, setIsValidSlug] = useState(false);

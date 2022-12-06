@@ -1,8 +1,7 @@
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import abiJSON from "../abi/abi.json";
-import { RootState, useAppDispatch } from "../store";
+import { useAppDispatch } from "../store";
 import { connectionActions } from "../store/slices/connection";
 import useNotification from "./useNotification";
 
@@ -11,14 +10,7 @@ const getethereumobject = () => (window as any).ethereum;
 
 const useWeb3 = () => {
   const dispatch = useAppDispatch();
-  const [provider, setProvider] = useState<ethers.providers.Web3Provider>();
-  const [signer, setSigner] = useState<ethers.providers.JsonRpcSigner>();
-  const [contract, setContract] = useState<ethers.Contract>();
-
-  // const connected = useSelector((state: RootState) => state.connection.connected);
-  // const account = useSelector((state: RootState) => state.connection.account);
-  // const chainAllowed = useSelector((state: RootState) => state.connection.chainAllowed);
-  // const chainId = useSelector((state: RootState) => state.connection.chainId);
+  const [returnData, setReturnData] = useState<any>({ provider: null, signer: null, contract: null });
 
   useEffect(() => {
     const ethereum = getethereumobject();
@@ -27,9 +19,7 @@ const useWeb3 = () => {
       const signer = provider.getSigner();
       const contract = new ethers.Contract(import.meta.env.VITE_CONTRACT_ADDRESS, abiJSON.abi, signer);
 
-      setProvider(provider);
-      setSigner(signer);
-      setContract(contract);
+      setReturnData({ provider, signer, contract });
 
       // Detect Network change & validate allowed chain
       provider.on("network", (newNetwork, oldNetwork) => {
@@ -41,12 +31,10 @@ const useWeb3 = () => {
           // useNotification("Please connect to the " + import.meta.env.VITE_ALLOWED_CHAIN + " Network", "warning");
         }
       });
-
       // on account change
       ethereum.on("accountsChanged", () => {
         window.location.reload();
       });
-
       provider
         .send("eth_accounts", [])
         .then(async (accounts) => {
@@ -71,6 +59,6 @@ const useWeb3 = () => {
     }
   }, []);
 
-  return { provider, signer, contract };
+  return { provider: returnData.provider, signer: returnData.signer, contract: returnData.contract };
 };
 export default useWeb3;

@@ -1,5 +1,4 @@
 import { Box, Container, Grid } from "@mui/material";
-import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import styles from "../styles/dashboard.module.css";
