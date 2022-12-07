@@ -16,7 +16,7 @@ import { BigNumber, ethers } from "ethers";
 import { commonActions } from "../store/slices/common";
 import slugify from "slugify";
 import { create } from "ipfs-http-client";
-import web3Context from "../contexts/web3context";
+import web3Context from "../contexts/web3Context";
 const ipfs = create({
   host: import.meta.env.VITE_IPFS_HOST,
   port: import.meta.env.VITE_IPFS_PORT,

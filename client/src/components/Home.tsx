@@ -11,7 +11,7 @@ import { categoryActions } from "../store/slices/category";
 import { campaignActions } from "../store/slices/campaign";
 import moment from "moment";
 import Dashboard from "./Dashboard";
-import web3Context from "../contexts/web3context";
+import web3Context from "../contexts/web3Context";
 
 const Home = () => {
   const dispatch = useAppDispatch();

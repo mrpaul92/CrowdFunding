@@ -12,7 +12,7 @@ import { useContext, useEffect, useState } from "react";
 import { utils } from "ethers";
 import useWeb3Api from "../../hooks/useWeb3Api";
 import { userActions } from "../../store/slices/user";
-import web3Context from "../../contexts/web3context";
+import web3Context from "../../contexts/web3Context";
 
 const allowedChainID = Number(import.meta.env.VITE_ALLOWED_CHAINID);
 
@@ -32,21 +32,26 @@ const Navbar = () => {
   };
 
   const getUserData = async () => {
-    const data = await api.getCurrentUser();
-    if (data.status) {
-      setName(data.name);
-      dispatch(userActions.updateUser({ type: data.role, name: data.name, email: data.email }));
+    if (account) {
+      const data = await api.getCurrentUser();
+      if (data.status) {
+        setName(data.name);
+        dispatch(userActions.updateUser({ type: data.role, name: data.name, email: data.email }));
+      }
+    }
+  };
+
+  const getBalance = async () => {
+    if (provider) {
+      const bal = await provider.getBalance(account);
+      const balance = utils.formatEther(bal.toString());
+      setBalance(balance);
     }
   };
 
   useEffect(() => {
-    if (account) {
-      getUserData();
-      provider.getBalance(account).then((balance: any) => {
-        const bal = utils.formatEther(balance.toString());
-        setBalance(bal);
-      });
-    }
+    getUserData();
+    getBalance();
   }, [account]);
 
   const handleWalletConnect = () => {

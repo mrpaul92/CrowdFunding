@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, List, ListItem, ListItemText, TextField, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, List, ListItem, ListItemText, TextField, Typography } from "@mui/material";
 import { Container } from "@mui/system";
 import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -12,7 +12,7 @@ import { commonActions } from "../store/slices/common";
 import { BigNumber, ethers } from "ethers";
 import moment from "moment";
 import { CampaignApprovalStatus, CampaignStatus } from "../types";
-import web3Context from "../contexts/web3context";
+import web3Context from "../contexts/web3Context";
 
 const CampaignDetails = () => {
   const dispatch = useAppDispatch();
@@ -29,6 +29,7 @@ const CampaignDetails = () => {
   const [goalAmount, setGoalAmount] = useState("");
   const [remainingDays, setRemainingDays] = useState("");
   const [isRefreshTrigger, setIsRefreshTrigger] = useState(false);
+  const [percentage, setPercentage] = useState(0);
 
   const connected = useSelector((state: RootState) => state.connection.connected);
 
@@ -52,6 +53,7 @@ const CampaignDetails = () => {
             const remainingTime = timeDiff > 0 ? timeDiff / (60 * 60 * 24) : 0;
             const remainingDays = remainingTime.toFixed(0);
             setRemainingDays(remainingDays);
+            setPercentage(Math.round(data.currentBalance / data.goalAmount) * 100);
           })
           .catch((err) => {
             useNotification("Page not found!", "error");
@@ -123,7 +125,13 @@ const CampaignDetails = () => {
         </DialogActions>
       </Dialog>
 
-      {!connected && <div style={{ margin: "100px auto", textAlign: "center" }}> Please connect your metamask wallet</div>}
+      {!connected && (
+        <div style={{ margin: "100px auto", textAlign: "center" }}>
+          No data available!
+          <br />
+          Please connect your metamask wallet
+        </div>
+      )}
       {connected && !isValidSlug && <div style={{ margin: "100px auto", textAlign: "center" }}>No data available!</div>}
       {connected && isValidSlug && (
         <Grid container>
@@ -161,6 +169,25 @@ const CampaignDetails = () => {
                 {ethers.utils.formatEther(BigNumber.from(data?.currentBalance.toString()))} / {ethers.utils.formatEther(BigNumber.from(data?.goalAmount.toString()))}
                 <br />
                 <span>{import.meta.env.VITE_ALLOWED_CHAIN} Raised</span>
+                <br />
+                <br />
+                <Box sx={{ position: "relative", display: "inline-flex" }}>
+                  <CircularProgress variant="determinate" value={percentage} />
+                  <Box
+                    sx={{
+                      top: 0,
+                      left: 0,
+                      bottom: 0,
+                      right: 0,
+                      position: "absolute",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Typography variant="caption" component="div" color="text.secondary" style={{ fontFamily: "monospace" }}>{`${percentage}%`}</Typography>
+                  </Box>
+                </Box>
               </div>
               <div className={styles.contributionsContainer}>
                 <div>{contributions ? contributions.length : 0} Supporters</div>

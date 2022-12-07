@@ -6,7 +6,7 @@ import CampaignDetails from "./components/CampaignDetails";
 import Home from "./components/Home";
 import Navbar from "./components/ui/Navbar";
 import useWeb3 from "./hooks/useWeb3";
-import web3Context from "./contexts/web3context";
+import web3Context from "./contexts/web3Context";
 import { Container } from "@mui/system";
 
 function App() {
