@@ -8,11 +8,16 @@ import Navbar from "./components/ui/Navbar";
 import useWeb3 from "./hooks/useWeb3";
 import web3Context from "./contexts/web3Context";
 import { Container } from "@mui/system";
+import { Contract, providers, Signer } from "ethers";
 
 function App() {
   const { provider, signer, contract } = useWeb3();
   const [web3available, setWeb3available] = useState(false);
-  const [web3ContextValue, setWeb3ContextValue] = useState<any>({ provider: null, signer: null, contract: null });
+  const [web3ContextValue, setWeb3ContextValue] = useState<{ provider: providers.Web3Provider | null; signer: Signer | null; contract: Contract | null }>({
+    provider: null,
+    signer: null,
+    contract: null,
+  });
 
   const checkWeb3Availability = () => {
     if (!web3available && contract) {

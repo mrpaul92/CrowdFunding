@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { Contract, ethers, providers, Signer } from "ethers";
 import { useEffect, useState } from "react";
 import abiJSON from "../abi/abi.json";
 import { useAppDispatch } from "../store";
@@ -10,7 +10,7 @@ const getethereumobject = () => (window as any).ethereum;
 
 const useWeb3 = () => {
   const dispatch = useAppDispatch();
-  const [returnData, setReturnData] = useState<any>({ provider: null, signer: null, contract: null });
+  const [returnData, setReturnData] = useState<{ provider: providers.Web3Provider | null; signer: Signer | null; contract: Contract | null }>({ provider: null, signer: null, contract: null });
 
   useEffect(() => {
     const ethereum = getethereumobject();

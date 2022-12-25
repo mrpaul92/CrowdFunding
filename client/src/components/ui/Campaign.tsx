@@ -67,8 +67,8 @@ const Campaign = ({ ...props }) => {
     setIsContributeDialogOpen(false);
   };
 
-  const handleAmountChange = (e: any) => {
-    setContributionAmount(e.target.value);
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setContributionAmount(parseInt(e.target.value));
   };
   const handlePayment = async () => {
     if (contributionAmount < 0.01) return useNotification("Minimum amount is required!", "error");

@@ -11,7 +11,7 @@ import ShareIcon from "@mui/icons-material/Share";
 import { commonActions } from "../store/slices/common";
 import { BigNumber, ethers } from "ethers";
 import moment from "moment";
-import { CampaignApprovalStatus, CampaignStatus } from "../types";
+import { Campaign, CampaignApprovalStatus, CampaignStatus, Contribution } from "../types";
 import web3Context from "../contexts/web3Context";
 
 const CampaignDetails = () => {
@@ -21,8 +21,8 @@ const CampaignDetails = () => {
   const { slug } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [isValidSlug, setIsValidSlug] = useState(false);
-  const [data, setData] = useState<any>(null);
-  const [contributions, setContributions] = useState<any>(null);
+  const [data, setData] = useState<Campaign | null>(null);
+  const [contributions, setContributions] = useState<Contribution[] | null>(null);
   const [isContributeDialogOpen, setIsContributeDialogOpen] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [contributionAmount, setContributionAmount] = useState(0);
@@ -38,7 +38,7 @@ const CampaignDetails = () => {
       if (slug) {
         api
           .getCampaignBySlug(slug)
-          .then(async (data) => {
+          .then(async (data: Campaign) => {
             setData(data);
             setIsValidSlug(true);
             setIsLoading(false);
@@ -80,7 +80,7 @@ const CampaignDetails = () => {
     if (contributionAmount > Number(goalAmount)) return useNotification("Maximum target exceeds", "error");
 
     setButtonDisabled(true);
-    await api.contribute(data.id, contributionAmount);
+    await api.contribute(data!.id, contributionAmount);
     handleClose();
     dispatch(commonActions.triggerRefresh({}));
     setIsRefreshTrigger(!isRefreshTrigger);
@@ -193,7 +193,7 @@ const CampaignDetails = () => {
                 <div>{contributions ? contributions.length : 0} Supporters</div>
                 <List dense={true}>
                   {contributions &&
-                    contributions.map((item: { contributor: string; amount: BigNumber }, index: number) => (
+                    contributions.map((item: Contribution, index: number) => (
                       <ListItem key={index}>
                         <ListItemText primary={item.contributor + " - " + ethers.utils.formatEther(BigNumber.from(item?.amount.toString()))} />
                       </ListItem>
