@@ -9,7 +9,12 @@ const config: HardhatUserConfig = {
   networks: {
     polygon: {
       url: process.env.POLYGON_NODE_URL,
-      accounts: [process.env.POLYGON_ACCOUNT_PRIVATE_KEY ? process.env.POLYGON_ACCOUNT_PRIVATE_KEY : ""],
+      accounts: [process.env.POLYGON_ACCOUNT_PRIVATE_KEY!],
+    },
+    bitgert: {
+      url: "https://nodes.vefinetwork.org/bitgert",
+      chainId: 32520,
+      accounts: [process.env.BITGERT_ACCOUNT_PRIVATE_KEY!],
     },
   },
 };
